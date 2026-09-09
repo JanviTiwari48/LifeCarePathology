@@ -2,14 +2,17 @@ package com.janvi.lifecarepathology.payment.controller;
 
 import com.janvi.lifecarepathology.payment.entity.Payment;
 import com.janvi.lifecarepathology.payment.service.PaymentService;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/payments")
 @RequiredArgsConstructor
+@Validated
 public class PaymentController {
 
     private final PaymentService paymentService;
@@ -27,8 +30,8 @@ public class PaymentController {
     @PatchMapping("/{id}/success")
     public ResponseEntity<Payment> markSuccess(
             @PathVariable Long id,
-            @RequestParam String razorpayPaymentId,
-            @RequestParam String razorpaySignature) {
+            @RequestParam @NotBlank(message = "Razorpay payment id is required") String razorpayPaymentId,
+            @RequestParam @NotBlank(message = "Razorpay signature is required") String razorpaySignature) {
         return ResponseEntity.ok(paymentService.markSuccess(id, razorpayPaymentId, razorpaySignature));
     }
 

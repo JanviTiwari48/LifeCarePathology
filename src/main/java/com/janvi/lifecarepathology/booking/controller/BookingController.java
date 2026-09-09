@@ -3,6 +3,7 @@ package com.janvi.lifecarepathology.booking.controller;
 import com.janvi.lifecarepathology.booking.dto.BookingRequest;
 import com.janvi.lifecarepathology.booking.entity.Booking;
 import com.janvi.lifecarepathology.booking.service.BookingService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ public class BookingController {
     private final BookingService bookingService;
 
     @PostMapping
-    public ResponseEntity<Booking> createBooking(@RequestBody BookingRequest request) {
+    public ResponseEntity<Booking> createBooking(@Valid  @RequestBody BookingRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(bookingService.createBooking(request));
     }
 

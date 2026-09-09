@@ -2,6 +2,7 @@ package com.janvi.lifecarepathology.testcatalog.controller;
 
 import com.janvi.lifecarepathology.testcatalog.entity.PathologyTest;
 import com.janvi.lifecarepathology.testcatalog.service.PathologyTestService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ public class PathologyTestController {
     private final PathologyTestService testService;
 
     @PostMapping
-    public ResponseEntity<PathologyTest> createTest(@RequestBody PathologyTest test) {
+    public ResponseEntity<PathologyTest> createTest( @Valid @RequestBody PathologyTest test) {
         return ResponseEntity.status(HttpStatus.CREATED).body(testService.createTest(test));
     }
 
@@ -37,7 +38,7 @@ public class PathologyTestController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PathologyTest> updateTest(@PathVariable Long id, @RequestBody PathologyTest test) {
+    public ResponseEntity<PathologyTest> updateTest(@PathVariable Long id,@Valid @RequestBody PathologyTest test) {
         return ResponseEntity.ok(testService.updateTest(id, test));
     }
 

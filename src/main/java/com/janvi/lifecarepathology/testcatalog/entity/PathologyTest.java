@@ -2,6 +2,7 @@ package com.janvi.lifecarepathology.testcatalog.entity;
 
 import com.janvi.lifecarepathology.common.entity.BaseEntity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
@@ -17,21 +18,25 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class PathologyTest extends BaseEntity {
 
+    @NotBlank(message = "Test name is required")
     @Column(nullable = false, unique = true)
-    private String testName; // e.g. "Complete Blood Count (CBC)"
+    private String testName;
 
+    @NotBlank(message = "Test code is required")
     @Column(nullable = false)
-    private String testCode; // e.g. "CBC001" — used in reports/labels
+    private String testCode;
 
     private String description;
 
+    @NotNull(message = "Price is required")
+    @DecimalMin(value = "0.0", inclusive = false, message = "Price must be greater than 0")
     @Column(nullable = false)
     private BigDecimal price;
 
-    private String sampleType; // e.g. "Blood", "Urine" — informs Sample Management later
+    private String sampleType;
 
-    private String normalRange; // e.g. "4.5-11.0 x10^9/L" — plain text for now
+    private String normalRange;
 
     @Column(nullable = false)
-    private boolean active = true; // lets Admin retire a test without deleting history
+    private Boolean active = true;
 }

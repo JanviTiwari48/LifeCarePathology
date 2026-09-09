@@ -2,6 +2,7 @@ package com.janvi.lifecarepathology.doctor.controller;
 
 import com.janvi.lifecarepathology.doctor.entity.Doctor;
 import com.janvi.lifecarepathology.doctor.service.DoctorService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ public class DoctorController {
     private final DoctorService doctorService;
 
     @PostMapping("/user/{userId}")
-    public ResponseEntity<Doctor> createDoctor(@PathVariable Long userId, @RequestBody Doctor doctor) {
+    public ResponseEntity<Doctor> createDoctor(@PathVariable Long userId,@Valid @RequestBody Doctor doctor) {
         return ResponseEntity.status(HttpStatus.CREATED).body(doctorService.createDoctor(userId, doctor));
     }
 
@@ -32,7 +33,7 @@ public class DoctorController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Doctor> updateDoctor(@PathVariable Long id, @RequestBody Doctor doctor) {
+    public ResponseEntity<Doctor> updateDoctor(@PathVariable Long id,@Valid @RequestBody Doctor doctor) {
         return ResponseEntity.ok(doctorService.updateDoctor(id, doctor));
     }
 

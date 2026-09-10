@@ -1,6 +1,7 @@
 package com.janvi.lifecarepathology.testcatalog.controller;
 
-import com.janvi.lifecarepathology.testcatalog.entity.PathologyTest;
+import com.janvi.lifecarepathology.testcatalog.dto.PathologyTestRequest;
+import com.janvi.lifecarepathology.testcatalog.dto.PathologyTestResponse;
 import com.janvi.lifecarepathology.testcatalog.service.PathologyTestService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,28 +19,28 @@ public class PathologyTestController {
     private final PathologyTestService testService;
 
     @PostMapping
-    public ResponseEntity<PathologyTest> createTest( @Valid @RequestBody PathologyTest test) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(testService.createTest(test));
+    public ResponseEntity<PathologyTestResponse> createTest(@Valid @RequestBody PathologyTestRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(testService.createTest(request));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PathologyTest> getTestById(@PathVariable Long id) {
+    public ResponseEntity<PathologyTestResponse> getTestById(@PathVariable Long id) {
         return ResponseEntity.ok(testService.getTestById(id));
     }
 
     @GetMapping
-    public ResponseEntity<List<PathologyTest>> getAllTests() {
+    public ResponseEntity<List<PathologyTestResponse>> getAllTests() {
         return ResponseEntity.ok(testService.getAllTests());
     }
 
     @GetMapping("/active")
-    public ResponseEntity<List<PathologyTest>> getActiveTests() {
+    public ResponseEntity<List<PathologyTestResponse>> getActiveTests() {
         return ResponseEntity.ok(testService.getActiveTests());
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PathologyTest> updateTest(@PathVariable Long id,@Valid @RequestBody PathologyTest test) {
-        return ResponseEntity.ok(testService.updateTest(id, test));
+    public ResponseEntity<PathologyTestResponse> updateTest(@PathVariable Long id, @Valid @RequestBody PathologyTestRequest request) {
+        return ResponseEntity.ok(testService.updateTest(id, request));
     }
 
     @PatchMapping("/{id}/deactivate")

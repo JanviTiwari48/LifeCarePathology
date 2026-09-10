@@ -1,13 +1,14 @@
 package com.janvi.lifecarepathology.user.service;
 
-import com.janvi.lifecarepathology.user.entity.User;
+import com.janvi.lifecarepathology.user.dto.UserRequest;
+import com.janvi.lifecarepathology.user.dto.UserResponse;
 
 import java.util.List;
 
 public interface UserService {
-    User createUser(User user);
-    User getUserById(Long id);
-    List<User> getAllUsers();
-    User updateUser(Long id, User updatedUser);
+    UserResponse createUser(UserRequest request);
+    UserResponse getUserById(Long id);
+    List<UserResponse> getAllUsers();
+    UserResponse updateUser(Long id, UserRequest request);
     void deleteUser(Long id);
 }

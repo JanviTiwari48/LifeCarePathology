@@ -7,7 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.NoSuchElementException;
+
+import com.janvi.lifecarepathology.common.exception.ResourceNotFoundException;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +24,7 @@ public class PathologyTestServiceImpl implements PathologyTestService {
     @Override
     public PathologyTest getTestById(Long id) {
         return testRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Test not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Test not found with id: " + id));
     }
 
     @Override

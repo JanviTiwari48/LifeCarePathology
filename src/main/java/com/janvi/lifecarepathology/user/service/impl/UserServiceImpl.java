@@ -5,7 +5,7 @@ import com.janvi.lifecarepathology.user.repository.UserRepository;
 import com.janvi.lifecarepathology.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
+import com.janvi.lifecarepathology.common.exception.ResourceNotFoundException;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -23,7 +23,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("User not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
     }
 
     @Override

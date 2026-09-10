@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
+import com.janvi.lifecarepathology.common.exception.ResourceNotFoundException;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +23,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public Payment createPaymentRecord(Long bookingId) {
         Booking booking = bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new NoSuchElementException("Booking not found with id: " + bookingId));
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found with id: " + bookingId));
 
         Payment payment = new Payment();
         payment.setBooking(booking);
@@ -36,7 +37,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public Payment getPaymentById(Long id) {
         return paymentRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Payment not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Payment not found with id: " + id));
     }
 
     @Override

@@ -1,6 +1,7 @@
 
 package com.janvi.lifecarepathology.doctor.service.impl;
 
+import com.janvi.lifecarepathology.common.exception.ResourceNotFoundException;
 import com.janvi.lifecarepathology.doctor.entity.Doctor;
 import com.janvi.lifecarepathology.doctor.repository.DoctorRepository;
 import com.janvi.lifecarepathology.doctor.service.DoctorService;
@@ -10,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.NoSuchElementException;
+import com.janvi.lifecarepathology.common.exception.ResourceNotFoundException;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +23,7 @@ public class DoctorServiceImpl implements DoctorService {
     @Override
     public Doctor createDoctor(Long userId, Doctor doctor) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NoSuchElementException("User not found with id: " + userId));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
         doctor.setUser(user);
         return doctorRepository.save(doctor);
     }
@@ -30,7 +31,7 @@ public class DoctorServiceImpl implements DoctorService {
     @Override
     public Doctor getDoctorById(Long id) {
         return doctorRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Doctor not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found with id: " + id));
     }
 
     @Override

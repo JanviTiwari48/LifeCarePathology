@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
-
+import com.janvi.lifecarepathology.common.exception.ResourceNotFoundException;
 @Service
 @RequiredArgsConstructor
 public class SampleServiceImpl implements SampleService {
@@ -23,7 +23,7 @@ public class SampleServiceImpl implements SampleService {
     @Override
     public Sample collectSample(Long bookingId, String sampleCode, String collectedBy) {
         Booking booking = bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new NoSuchElementException("Booking not found with id: " + bookingId));
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found with id: " + bookingId));
 
         Sample sample = new Sample();
         sample.setBooking(booking);
@@ -38,7 +38,7 @@ public class SampleServiceImpl implements SampleService {
     @Override
     public Sample getSampleById(Long id) {
         return sampleRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Sample not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Sample not found with id: " + id));
     }
 
     @Override

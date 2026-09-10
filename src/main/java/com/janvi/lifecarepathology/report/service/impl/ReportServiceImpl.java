@@ -12,6 +12,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import com.janvi.lifecarepathology.common.exception.ResourceNotFoundException;
+import com.janvi.lifecarepathology.common.exception.BusinessRuleException;
+
 @Service
 @RequiredArgsConstructor
 public class ReportServiceImpl implements ReportService {
@@ -22,10 +25,10 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public Report generateReport(Long resultId, String reportNumber) {
         Result result = resultRepository.findById(resultId)
-                .orElseThrow(() -> new NoSuchElementException("Result not found with id: " + resultId));
+                .orElseThrow(() -> new ResourceNotFoundException("Result not found with id: " + resultId));
 
         if (!result.isVerified()) {
-            throw new IllegalStateException("Cannot generate a report for an unverified result");
+            throw new BusinessRuleException("Cannot generate a report for an unverified result");
         }
 
         Report report = new Report();
@@ -41,7 +44,7 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public Report getReportById(Long id) {
         return reportRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Report not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Report not found with id: " + id));
     }
 
     @Override

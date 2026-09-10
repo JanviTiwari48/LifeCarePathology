@@ -18,6 +18,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
+import com.janvi.lifecarepathology.common.exception.ResourceNotFoundException;
+import com.janvi.lifecarepathology.common.exception.BusinessRuleException;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
@@ -33,17 +35,17 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public Booking createBooking(BookingRequest request) {
         Patient patient = patientRepository.findById(request.getPatientId())
-                .orElseThrow(() -> new NoSuchElementException("Patient not found with id: " + request.getPatientId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found with id: " + request.getPatientId()));
 
         Doctor doctor = null;
         if (request.getDoctorId() != null) {
             doctor = doctorRepository.findById(request.getDoctorId())
-                    .orElseThrow(() -> new NoSuchElementException("Doctor not found with id: " + request.getDoctorId()));
+                    .orElseThrow(() -> new ResourceNotFoundException("Doctor not found with id: " + request.getDoctorId()));
         }
 
         Set<PathologyTest> tests = new HashSet<>(testRepository.findAllById(request.getTestIds()));
         if (tests.isEmpty()) {
-            throw new IllegalArgumentException("A booking must include at least one valid test");
+            throw new BusinessRuleException("A booking must include at least one valid test");
         }
 
         BigDecimal totalAmount = tests.stream()
@@ -64,7 +66,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public Booking getBookingById(Long id) {
         return bookingRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Booking not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found with id: " + id));
     }
 
     @Override

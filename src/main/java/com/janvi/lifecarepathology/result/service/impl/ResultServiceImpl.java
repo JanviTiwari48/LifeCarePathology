@@ -7,10 +7,11 @@ import com.janvi.lifecarepathology.sample.entity.Sample;
 import com.janvi.lifecarepathology.sample.repository.SampleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import com.janvi.lifecarepathology.common.exception.ResourceNotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.NoSuchElementException;
+
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +23,7 @@ public class ResultServiceImpl implements ResultService {
     @Override
     public Result enterResult(Long sampleId, String resultData, String remarks, String enteredBy) {
         Sample sample = sampleRepository.findById(sampleId)
-                .orElseThrow(() -> new NoSuchElementException("Sample not found with id: " + sampleId));
+                .orElseThrow(() -> new ResourceNotFoundException("Sample not found with id: " + sampleId));
 
         Result result = new Result();
         result.setSample(sample);
@@ -38,7 +39,7 @@ public class ResultServiceImpl implements ResultService {
     @Override
     public Result getResultById(Long id) {
         return resultRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Result not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Result not found with id: " + id));
     }
 
     @Override

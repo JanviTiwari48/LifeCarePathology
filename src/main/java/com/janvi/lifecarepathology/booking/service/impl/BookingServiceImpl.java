@@ -1,10 +1,14 @@
 package com.janvi.lifecarepathology.booking.service.impl;
 
 import com.janvi.lifecarepathology.booking.dto.BookingRequest;
+import com.janvi.lifecarepathology.booking.dto.BookingResponse;
 import com.janvi.lifecarepathology.booking.entity.Booking;
 import com.janvi.lifecarepathology.booking.entity.BookingStatus;
+import com.janvi.lifecarepathology.booking.mapper.BookingMapper;
 import com.janvi.lifecarepathology.booking.repository.BookingRepository;
 import com.janvi.lifecarepathology.booking.service.BookingService;
+import com.janvi.lifecarepathology.common.exception.BusinessRuleException;
+import com.janvi.lifecarepathology.common.exception.ResourceNotFoundException;
 import com.janvi.lifecarepathology.doctor.entity.Doctor;
 import com.janvi.lifecarepathology.doctor.repository.DoctorRepository;
 import com.janvi.lifecarepathology.patient.entity.Patient;
@@ -18,9 +22,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
-import com.janvi.lifecarepathology.common.exception.ResourceNotFoundException;
-import com.janvi.lifecarepathology.common.exception.BusinessRuleException;
-import java.util.NoSuchElementException;
 import java.util.Set;
 
 @Service
@@ -31,9 +32,10 @@ public class BookingServiceImpl implements BookingService {
     private final PatientRepository patientRepository;
     private final DoctorRepository doctorRepository;
     private final PathologyTestRepository testRepository;
+    private final BookingMapper bookingMapper;
 
     @Override
-    public Booking createBooking(BookingRequest request) {
+    public BookingResponse createBooking(BookingRequest request) {
         Patient patient = patientRepository.findById(request.getPatientId())
                 .orElseThrow(() -> new ResourceNotFoundException("Patient not found with id: " + request.getPatientId()));
 
@@ -60,28 +62,35 @@ public class BookingServiceImpl implements BookingService {
         booking.setStatus(BookingStatus.BOOKED);
         booking.setTotalAmount(totalAmount);
 
-        return bookingRepository.save(booking);
+        Booking saved = bookingRepository.save(booking);
+        return bookingMapper.toResponse(saved);
     }
 
     @Override
-    public Booking getBookingById(Long id) {
-        return bookingRepository.findById(id)
+    public BookingResponse getBookingById(Long id) {
+        Booking booking = bookingRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Booking not found with id: " + id));
+        return bookingMapper.toResponse(booking);
     }
 
     @Override
-    public List<Booking> getAllBookings() {
-        return bookingRepository.findAll();
+    public List<BookingResponse> getAllBookings() {
+        return bookingRepository.findAll().stream()
+                .map(bookingMapper::toResponse)
+                .toList();
     }
 
     @Override
-    public List<Booking> getBookingsByPatient(Long patientId) {
-        return bookingRepository.findByPatientId(patientId);
+    public List<BookingResponse> getBookingsByPatient(Long patientId) {
+        return bookingRepository.findByPatientId(patientId).stream()
+                .map(bookingMapper::toResponse)
+                .toList();
     }
 
     @Override
     public void cancelBooking(Long id) {
-        Booking booking = getBookingById(id);
+        Booking booking = bookingRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found with id: " + id));
         booking.setStatus(BookingStatus.CANCELLED);
         bookingRepository.save(booking);
     }

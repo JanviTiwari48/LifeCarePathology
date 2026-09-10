@@ -1,13 +1,14 @@
 package com.janvi.lifecarepathology.patient.service;
 
-import com.janvi.lifecarepathology.patient.entity.Patient;
+import com.janvi.lifecarepathology.patient.dto.PatientRequest;
+import com.janvi.lifecarepathology.patient.dto.PatientResponse;
 
 import java.util.List;
 
 public interface PatientService {
-    Patient createPatient(Long userId, Patient patient);
-    Patient getPatientById(Long id);
-    List<Patient> getAllPatients();
-    Patient updatePatient(Long id, Patient updatedPatient);
+    PatientResponse createPatient(Long userId, PatientRequest request);
+    PatientResponse getPatientById(Long id);
+    List<PatientResponse> getAllPatients();
+    PatientResponse updatePatient(Long id, PatientRequest request);
     void deletePatient(Long id);
 }

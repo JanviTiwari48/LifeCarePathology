@@ -1,8 +1,10 @@
-
 package com.janvi.lifecarepathology.doctor.service.impl;
 
 import com.janvi.lifecarepathology.common.exception.ResourceNotFoundException;
+import com.janvi.lifecarepathology.doctor.dto.DoctorRequest;
+import com.janvi.lifecarepathology.doctor.dto.DoctorResponse;
 import com.janvi.lifecarepathology.doctor.entity.Doctor;
+import com.janvi.lifecarepathology.doctor.mapper.DoctorMapper;
 import com.janvi.lifecarepathology.doctor.repository.DoctorRepository;
 import com.janvi.lifecarepathology.doctor.service.DoctorService;
 import com.janvi.lifecarepathology.user.entity.User;
@@ -11,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import com.janvi.lifecarepathology.common.exception.ResourceNotFoundException;
 
 @Service
 @RequiredArgsConstructor
@@ -19,38 +20,47 @@ public class DoctorServiceImpl implements DoctorService {
 
     private final DoctorRepository doctorRepository;
     private final UserRepository userRepository;
+    private final DoctorMapper doctorMapper;
 
     @Override
-    public Doctor createDoctor(Long userId, Doctor doctor) {
+    public DoctorResponse createDoctor(Long userId, DoctorRequest request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+        Doctor doctor = doctorMapper.toEntity(request);
         doctor.setUser(user);
-        return doctorRepository.save(doctor);
+        Doctor saved = doctorRepository.save(doctor);
+        return doctorMapper.toResponse(saved);
     }
 
     @Override
-    public Doctor getDoctorById(Long id) {
-        return doctorRepository.findById(id)
+    public DoctorResponse getDoctorById(Long id) {
+        Doctor doctor = doctorRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Doctor not found with id: " + id));
+        return doctorMapper.toResponse(doctor);
     }
 
     @Override
-    public List<Doctor> getAllDoctors() {
-        return doctorRepository.findAll();
+    public List<DoctorResponse> getAllDoctors() {
+        return doctorRepository.findAll().stream()
+                .map(doctorMapper::toResponse)
+                .toList();
     }
 
     @Override
-    public Doctor updateDoctor(Long id, Doctor updatedDoctor) {
-        Doctor existing = getDoctorById(id);
-        existing.setSpecialization(updatedDoctor.getSpecialization());
-        existing.setQualification(updatedDoctor.getQualification());
-        existing.setYearsOfExperience(updatedDoctor.getYearsOfExperience());
-        return doctorRepository.save(existing);
+    public DoctorResponse updateDoctor(Long id, DoctorRequest request) {
+        Doctor existing = doctorRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found with id: " + id));
+        existing.setSpecialization(request.getSpecialization());
+        existing.setQualification(request.getQualification());
+        existing.setYearsOfExperience(request.getYearsOfExperience());
+        Doctor saved = doctorRepository.save(existing);
+        return doctorMapper.toResponse(saved);
     }
 
     @Override
     public void deleteDoctor(Long id) {
-        Doctor existing = getDoctorById(id);
+        Doctor existing = doctorRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found with id: " + id));
         doctorRepository.delete(existing);
     }
 }

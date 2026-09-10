@@ -1,6 +1,7 @@
 package com.janvi.lifecarepathology.patient.controller;
 
-import com.janvi.lifecarepathology.patient.entity.Patient;
+import com.janvi.lifecarepathology.patient.dto.PatientRequest;
+import com.janvi.lifecarepathology.patient.dto.PatientResponse;
 import com.janvi.lifecarepathology.patient.service.PatientService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,23 +19,23 @@ public class PatientController {
     private final PatientService patientService;
 
     @PostMapping("/user/{userId}")
-    public ResponseEntity<Patient> createPatient(@PathVariable Long userId, @Valid @RequestBody Patient patient) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(patientService.createPatient(userId, patient));
+    public ResponseEntity<PatientResponse> createPatient(@PathVariable Long userId, @Valid @RequestBody PatientRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(patientService.createPatient(userId, request));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Patient> getPatientById(@PathVariable Long id) {
+    public ResponseEntity<PatientResponse> getPatientById(@PathVariable Long id) {
         return ResponseEntity.ok(patientService.getPatientById(id));
     }
 
     @GetMapping
-    public ResponseEntity<List<Patient>> getAllPatients() {
+    public ResponseEntity<List<PatientResponse>> getAllPatients() {
         return ResponseEntity.ok(patientService.getAllPatients());
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Patient> updatePatient(@PathVariable Long id, @Valid  @RequestBody Patient patient) {
-        return ResponseEntity.ok(patientService.updatePatient(id, patient));
+    public ResponseEntity<PatientResponse> updatePatient(@PathVariable Long id, @Valid @RequestBody PatientRequest request) {
+        return ResponseEntity.ok(patientService.updatePatient(id, request));
     }
 
     @DeleteMapping("/{id}")

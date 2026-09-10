@@ -1,6 +1,7 @@
 package com.janvi.lifecarepathology.doctor.controller;
 
-import com.janvi.lifecarepathology.doctor.entity.Doctor;
+import com.janvi.lifecarepathology.doctor.dto.DoctorRequest;
+import com.janvi.lifecarepathology.doctor.dto.DoctorResponse;
 import com.janvi.lifecarepathology.doctor.service.DoctorService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,23 +19,23 @@ public class DoctorController {
     private final DoctorService doctorService;
 
     @PostMapping("/user/{userId}")
-    public ResponseEntity<Doctor> createDoctor(@PathVariable Long userId,@Valid @RequestBody Doctor doctor) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(doctorService.createDoctor(userId, doctor));
+    public ResponseEntity<DoctorResponse> createDoctor(@PathVariable Long userId, @Valid @RequestBody DoctorRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(doctorService.createDoctor(userId, request));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Doctor> getDoctorById(@PathVariable Long id) {
+    public ResponseEntity<DoctorResponse> getDoctorById(@PathVariable Long id) {
         return ResponseEntity.ok(doctorService.getDoctorById(id));
     }
 
     @GetMapping
-    public ResponseEntity<List<Doctor>> getAllDoctors() {
+    public ResponseEntity<List<DoctorResponse>> getAllDoctors() {
         return ResponseEntity.ok(doctorService.getAllDoctors());
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Doctor> updateDoctor(@PathVariable Long id,@Valid @RequestBody Doctor doctor) {
-        return ResponseEntity.ok(doctorService.updateDoctor(id, doctor));
+    public ResponseEntity<DoctorResponse> updateDoctor(@PathVariable Long id, @Valid @RequestBody DoctorRequest request) {
+        return ResponseEntity.ok(doctorService.updateDoctor(id, request));
     }
 
     @DeleteMapping("/{id}")

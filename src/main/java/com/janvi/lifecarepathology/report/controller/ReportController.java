@@ -1,6 +1,6 @@
 package com.janvi.lifecarepathology.report.controller;
 
-import com.janvi.lifecarepathology.report.entity.Report;
+import com.janvi.lifecarepathology.report.dto.ReportResponse;
 import com.janvi.lifecarepathology.report.service.ReportService;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ public class ReportController {
     private final ReportService reportService;
 
     @PostMapping("/result/{resultId}")
-    public ResponseEntity<Report> generateReport(
+    public ResponseEntity<ReportResponse> generateReport(
             @PathVariable Long resultId,
             @RequestParam @NotBlank(message = "Report number is required") String reportNumber) {
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -28,17 +28,17 @@ public class ReportController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Report> getReportById(@PathVariable Long id) {
+    public ResponseEntity<ReportResponse> getReportById(@PathVariable Long id) {
         return ResponseEntity.ok(reportService.getReportById(id));
     }
 
     @GetMapping
-    public ResponseEntity<List<Report>> getAllReports() {
+    public ResponseEntity<List<ReportResponse>> getAllReports() {
         return ResponseEntity.ok(reportService.getAllReports());
     }
 
     @PatchMapping("/{id}/downloaded")
-    public ResponseEntity<Report> markDownloaded(@PathVariable Long id) {
+    public ResponseEntity<ReportResponse> markDownloaded(@PathVariable Long id) {
         return ResponseEntity.ok(reportService.markDownloaded(id));
     }
 }

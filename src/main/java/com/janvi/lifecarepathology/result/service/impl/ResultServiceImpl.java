@@ -1,17 +1,18 @@
 package com.janvi.lifecarepathology.result.service.impl;
 
+import com.janvi.lifecarepathology.common.exception.ResourceNotFoundException;
+import com.janvi.lifecarepathology.result.dto.ResultResponse;
 import com.janvi.lifecarepathology.result.entity.Result;
+import com.janvi.lifecarepathology.result.mapper.ResultMapper;
 import com.janvi.lifecarepathology.result.repository.ResultRepository;
 import com.janvi.lifecarepathology.result.service.ResultService;
 import com.janvi.lifecarepathology.sample.entity.Sample;
 import com.janvi.lifecarepathology.sample.repository.SampleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import com.janvi.lifecarepathology.common.exception.ResourceNotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
 
 @Service
 @RequiredArgsConstructor
@@ -19,9 +20,10 @@ public class ResultServiceImpl implements ResultService {
 
     private final ResultRepository resultRepository;
     private final SampleRepository sampleRepository;
+    private final ResultMapper resultMapper;
 
     @Override
-    public Result enterResult(Long sampleId, String resultData, String remarks, String enteredBy) {
+    public ResultResponse enterResult(Long sampleId, String resultData, String remarks, String enteredBy) {
         Sample sample = sampleRepository.findById(sampleId)
                 .orElseThrow(() -> new ResourceNotFoundException("Sample not found with id: " + sampleId));
 
@@ -33,24 +35,30 @@ public class ResultServiceImpl implements ResultService {
         result.setEnteredAt(LocalDateTime.now());
         result.setVerified(false);
 
-        return resultRepository.save(result);
+        Result saved = resultRepository.save(result);
+        return resultMapper.toResponse(saved);
     }
 
     @Override
-    public Result getResultById(Long id) {
-        return resultRepository.findById(id)
+    public ResultResponse getResultById(Long id) {
+        Result result = resultRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Result not found with id: " + id));
+        return resultMapper.toResponse(result);
     }
 
     @Override
-    public List<Result> getAllResults() {
-        return resultRepository.findAll();
+    public List<ResultResponse> getAllResults() {
+        return resultRepository.findAll().stream()
+                .map(resultMapper::toResponse)
+                .toList();
     }
 
     @Override
-    public Result verifyResult(Long id) {
-        Result result = getResultById(id);
+    public ResultResponse verifyResult(Long id) {
+        Result result = resultRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Result not found with id: " + id));
         result.setVerified(true);
-        return resultRepository.save(result);
+        Result saved = resultRepository.save(result);
+        return resultMapper.toResponse(saved);
     }
 }

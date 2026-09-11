@@ -1,6 +1,6 @@
 package com.janvi.lifecarepathology.sample.controller;
 
-import com.janvi.lifecarepathology.sample.entity.Sample;
+import com.janvi.lifecarepathology.sample.dto.SampleResponse;
 import com.janvi.lifecarepathology.sample.service.SampleService;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ public class SampleController {
     private final SampleService sampleService;
 
     @PostMapping("/booking/{bookingId}")
-    public ResponseEntity<Sample> collectSample(
+    public ResponseEntity<SampleResponse> collectSample(
             @PathVariable Long bookingId,
             @RequestParam @NotBlank(message = "Sample code is required") String sampleCode,
             @RequestParam @NotBlank(message = "Collected by is required") String collectedBy) {
@@ -29,17 +29,17 @@ public class SampleController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Sample> getSampleById(@PathVariable Long id) {
+    public ResponseEntity<SampleResponse> getSampleById(@PathVariable Long id) {
         return ResponseEntity.ok(sampleService.getSampleById(id));
     }
 
     @GetMapping
-    public ResponseEntity<List<Sample>> getAllSamples() {
+    public ResponseEntity<List<SampleResponse>> getAllSamples() {
         return ResponseEntity.ok(sampleService.getAllSamples());
     }
 
     @PatchMapping("/{id}/status")
-    public ResponseEntity<Sample> updateStatus(
+    public ResponseEntity<SampleResponse> updateStatus(
             @PathVariable Long id,
             @RequestParam @NotBlank(message = "Status is required") String status) {
         return ResponseEntity.ok(sampleService.updateSampleStatus(id, status));

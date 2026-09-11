@@ -1,10 +1,10 @@
 package com.janvi.lifecarepathology.payment.service;
 
-import com.janvi.lifecarepathology.payment.entity.Payment;
+import com.janvi.lifecarepathology.payment.dto.PaymentResponse;
 
 public interface PaymentService {
-    Payment createPaymentRecord(Long bookingId);
-    Payment getPaymentById(Long id);
-    Payment markSuccess(Long id, String razorpayPaymentId, String razorpaySignature);
-    Payment markFailed(Long id);
+    PaymentResponse createPaymentRecord(Long bookingId);
+    PaymentResponse getPaymentById(Long id);
+    PaymentResponse markSuccess(Long id, String razorpayPaymentId, String razorpaySignature);
+    PaymentResponse markFailed(Long id);
 }

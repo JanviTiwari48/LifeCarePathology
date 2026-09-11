@@ -1,6 +1,10 @@
 package com.janvi.lifecarepathology.report.service.impl;
 
+import com.janvi.lifecarepathology.common.exception.BusinessRuleException;
+import com.janvi.lifecarepathology.common.exception.ResourceNotFoundException;
+import com.janvi.lifecarepathology.report.dto.ReportResponse;
 import com.janvi.lifecarepathology.report.entity.Report;
+import com.janvi.lifecarepathology.report.mapper.ReportMapper;
 import com.janvi.lifecarepathology.report.repository.ReportRepository;
 import com.janvi.lifecarepathology.report.service.ReportService;
 import com.janvi.lifecarepathology.result.entity.Result;
@@ -10,10 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.NoSuchElementException;
-
-import com.janvi.lifecarepathology.common.exception.ResourceNotFoundException;
-import com.janvi.lifecarepathology.common.exception.BusinessRuleException;
 
 @Service
 @RequiredArgsConstructor
@@ -21,9 +21,10 @@ public class ReportServiceImpl implements ReportService {
 
     private final ReportRepository reportRepository;
     private final ResultRepository resultRepository;
+    private final ReportMapper reportMapper;
 
     @Override
-    public Report generateReport(Long resultId, String reportNumber) {
+    public ReportResponse generateReport(Long resultId, String reportNumber) {
         Result result = resultRepository.findById(resultId)
                 .orElseThrow(() -> new ResourceNotFoundException("Result not found with id: " + resultId));
 
@@ -36,26 +37,31 @@ public class ReportServiceImpl implements ReportService {
         report.setReportNumber(reportNumber);
         report.setGeneratedAt(LocalDateTime.now());
         report.setDownloaded(false);
-        // pdfFilePath stays null until Phase 11 generates the actual PDF
 
-        return reportRepository.save(report);
+        Report saved = reportRepository.save(report);
+        return reportMapper.toResponse(saved);
     }
 
     @Override
-    public Report getReportById(Long id) {
-        return reportRepository.findById(id)
+    public ReportResponse getReportById(Long id) {
+        Report report = reportRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Report not found with id: " + id));
+        return reportMapper.toResponse(report);
     }
 
     @Override
-    public List<Report> getAllReports() {
-        return reportRepository.findAll();
+    public List<ReportResponse> getAllReports() {
+        return reportRepository.findAll().stream()
+                .map(reportMapper::toResponse)
+                .toList();
     }
 
     @Override
-    public Report markDownloaded(Long id) {
-        Report report = getReportById(id);
+    public ReportResponse markDownloaded(Long id) {
+        Report report = reportRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Report not found with id: " + id));
         report.setDownloaded(true);
-        return reportRepository.save(report);
+        Report saved = reportRepository.save(report);
+        return reportMapper.toResponse(saved);
     }
 }

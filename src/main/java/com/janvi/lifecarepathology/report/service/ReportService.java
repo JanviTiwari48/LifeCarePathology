@@ -1,12 +1,12 @@
 package com.janvi.lifecarepathology.report.service;
 
-import com.janvi.lifecarepathology.report.entity.Report;
+import com.janvi.lifecarepathology.report.dto.ReportResponse;
 
 import java.util.List;
 
 public interface ReportService {
-    Report generateReport(Long resultId, String reportNumber);
-    Report getReportById(Long id);
-    List<Report> getAllReports();
-    Report markDownloaded(Long id);
+    ReportResponse generateReport(Long resultId, String reportNumber);
+    ReportResponse getReportById(Long id);
+    List<ReportResponse> getAllReports();
+    ReportResponse markDownloaded(Long id);
 }

@@ -1,12 +1,12 @@
 package com.janvi.lifecarepathology.sample.service;
 
-import com.janvi.lifecarepathology.sample.entity.Sample;
+import com.janvi.lifecarepathology.sample.dto.SampleResponse;
 
 import java.util.List;
 
 public interface SampleService {
-    Sample collectSample(Long bookingId, String sampleCode, String collectedBy);
-    Sample getSampleById(Long id);
-    List<Sample> getAllSamples();
-    Sample updateSampleStatus(Long id, String status);
+    SampleResponse collectSample(Long bookingId, String sampleCode, String collectedBy);
+    SampleResponse getSampleById(Long id);
+    List<SampleResponse> getAllSamples();
+    SampleResponse updateSampleStatus(Long id, String status);
 }

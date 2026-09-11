@@ -1,7 +1,7 @@
 package com.janvi.lifecarepathology.result.controller;
 
 import com.janvi.lifecarepathology.result.dto.ResultRequest;
-import com.janvi.lifecarepathology.result.entity.Result;
+import com.janvi.lifecarepathology.result.dto.ResultResponse;
 import com.janvi.lifecarepathology.result.service.ResultService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,26 +19,26 @@ public class ResultController {
     private final ResultService resultService;
 
     @PostMapping("/sample/{sampleId}")
-    public ResponseEntity<Result> enterResult(
+    public ResponseEntity<ResultResponse> enterResult(
             @PathVariable Long sampleId,
             @Valid @RequestBody ResultRequest request) {
-        Result result = resultService.enterResult(
+        ResultResponse result = resultService.enterResult(
                 sampleId, request.getResultData(), request.getRemarks(), request.getEnteredBy());
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Result> getResultById(@PathVariable Long id) {
+    public ResponseEntity<ResultResponse> getResultById(@PathVariable Long id) {
         return ResponseEntity.ok(resultService.getResultById(id));
     }
 
     @GetMapping
-    public ResponseEntity<List<Result>> getAllResults() {
+    public ResponseEntity<List<ResultResponse>> getAllResults() {
         return ResponseEntity.ok(resultService.getAllResults());
     }
 
     @PatchMapping("/{id}/verify")
-    public ResponseEntity<Result> verifyResult(@PathVariable Long id) {
+    public ResponseEntity<ResultResponse> verifyResult(@PathVariable Long id) {
         return ResponseEntity.ok(resultService.verifyResult(id));
     }
 }

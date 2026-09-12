@@ -1,7 +1,10 @@
 package com.janvi.lifecarepathology.sample.service.impl;
 
 import com.janvi.lifecarepathology.booking.entity.Booking;
+import com.janvi.lifecarepathology.booking.entity.BookingStatus;
 import com.janvi.lifecarepathology.booking.repository.BookingRepository;
+import com.janvi.lifecarepathology.booking.service.BookingService;
+import com.janvi.lifecarepathology.common.exception.BusinessRuleException;
 import com.janvi.lifecarepathology.common.exception.ResourceNotFoundException;
 import com.janvi.lifecarepathology.sample.dto.SampleResponse;
 import com.janvi.lifecarepathology.sample.entity.Sample;
@@ -22,11 +25,18 @@ public class SampleServiceImpl implements SampleService {
     private final SampleRepository sampleRepository;
     private final BookingRepository bookingRepository;
     private final SampleMapper sampleMapper;
+    private final BookingService bookingService; // NEW
 
     @Override
     public SampleResponse collectSample(Long bookingId, String sampleCode, String collectedBy) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new ResourceNotFoundException("Booking not found with id: " + bookingId));
+
+        // NEW — guard: can't collect a sample until the booking is paid
+        if (booking.getStatus() != BookingStatus.PAID) {
+            throw new BusinessRuleException(
+                    "Cannot collect sample: booking must be PAID first (current status: " + booking.getStatus() + ")");
+        }
 
         Sample sample = new Sample();
         sample.setBooking(booking);
@@ -36,6 +46,10 @@ public class SampleServiceImpl implements SampleService {
         sample.setCollectedBy(collectedBy);
 
         Sample saved = sampleRepository.save(sample);
+
+        // NEW — advance the booking now that the sample is physically collected
+        bookingService.updateBookingStatus(bookingId, BookingStatus.SAMPLE_COLLECTED);
+
         return sampleMapper.toResponse(saved);
     }
 

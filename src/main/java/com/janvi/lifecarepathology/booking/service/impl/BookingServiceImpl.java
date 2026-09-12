@@ -88,10 +88,22 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public void cancelBooking(Long id) {
-        Booking booking = bookingRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Booking not found with id: " + id));
-        booking.setStatus(BookingStatus.CANCELLED);
+    public void updateBookingStatus(Long bookingId, BookingStatus newStatus) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found with id: " + bookingId));
+
+        if (!booking.getStatus().canTransitionTo(newStatus)) {
+            throw new BusinessRuleException(
+                    "Cannot move booking from " + booking.getStatus() + " to " + newStatus);
+        }
+
+        booking.setStatus(newStatus);
         bookingRepository.save(booking);
     }
+    @Override
+    public void cancelBooking(Long id) {
+        updateBookingStatus(id, BookingStatus.CANCELLED);
+    }
+
+
 }

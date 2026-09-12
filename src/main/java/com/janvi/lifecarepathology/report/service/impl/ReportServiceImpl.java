@@ -1,5 +1,7 @@
 package com.janvi.lifecarepathology.report.service.impl;
 
+import com.janvi.lifecarepathology.booking.entity.BookingStatus;
+import com.janvi.lifecarepathology.booking.service.BookingService;
 import com.janvi.lifecarepathology.common.exception.BusinessRuleException;
 import com.janvi.lifecarepathology.common.exception.ResourceNotFoundException;
 import com.janvi.lifecarepathology.report.dto.ReportResponse;
@@ -22,6 +24,7 @@ public class ReportServiceImpl implements ReportService {
     private final ReportRepository reportRepository;
     private final ResultRepository resultRepository;
     private final ReportMapper reportMapper;
+    private final BookingService bookingService; // NEW
 
     @Override
     public ReportResponse generateReport(Long resultId, String reportNumber) {
@@ -39,6 +42,11 @@ public class ReportServiceImpl implements ReportService {
         report.setDownloaded(false);
 
         Report saved = reportRepository.save(report);
+
+        // NEW — final advance: the booking's workflow is now complete
+        Long bookingId = result.getSample().getBooking().getId();
+        bookingService.updateBookingStatus(bookingId, BookingStatus.REPORT_GENERATED);
+
         return reportMapper.toResponse(saved);
     }
 

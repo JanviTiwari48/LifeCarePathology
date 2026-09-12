@@ -8,6 +8,7 @@ import com.janvi.lifecarepathology.user.mapper.UserMapper;
 import com.janvi.lifecarepathology.user.repository.UserRepository;
 import com.janvi.lifecarepathology.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,10 +19,12 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder; // NEW
 
     @Override
     public UserResponse createUser(UserRequest request) {
         User user = userMapper.toEntity(request);
+        user.setPassword(passwordEncoder.encode(request.getPassword())); // NEW — hash before saving
         User saved = userRepository.save(user);
         return userMapper.toResponse(saved);
     }
@@ -48,6 +51,7 @@ public class UserServiceImpl implements UserService {
         existing.setPhoneNumber(request.getPhoneNumber());
         existing.setEmail(request.getEmail());
         existing.setRole(request.getRole());
+        // password still untouched here — unchanged reasoning from Phase 3
         User saved = userRepository.save(existing);
         return userMapper.toResponse(saved);
     }

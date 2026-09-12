@@ -46,6 +46,11 @@ public class GlobalExceptionHandler {
                 fieldErrors.put(violation.getPropertyPath().toString(), violation.getMessage()));
         return buildResponse(HttpStatus.BAD_REQUEST, "Validation failed", request, fieldErrors);
     }
+    @ExceptionHandler(org.springframework.security.authentication.BadCredentialsException.class)
+    public ResponseEntity<ErrorResponse> handleBadCredentials(
+            org.springframework.security.authentication.BadCredentialsException ex, HttpServletRequest request) {
+        return buildResponse(HttpStatus.UNAUTHORIZED, ex.getMessage(), request, null);
+    }
 
     // 500 — catch-all safety net for anything unhandled above
     @ExceptionHandler(Exception.class)
